@@ -3016,6 +3016,9 @@ func objTypeParams(obj types2.Object) *types2.TypeParamList {
 		case *types2.Alias:
 			return t.TypeParams()
 		}
+		if alias, ok := obj.Type().(*types2.Alias); ok {
+			return alias.TypeParams()
+		}
 	}
 	return nil
 }
