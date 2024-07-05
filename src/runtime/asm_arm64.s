@@ -19,6 +19,9 @@ TEXT runtime·rt0_go(SB),NOSPLIT|TOPFRAME,$0
 	SUB	$32, RSP
 	MOVW	R0, 8(RSP) // argc
 	MOVD	R1, 16(RSP) // argv
+#ifdef GOOS_sylixos
+	MOVD	R2, 24(RSP) // env
+#endif
 
 #ifdef TLS_darwin
 	// Initialize TLS.
@@ -95,6 +98,15 @@ nocgo:
 	// LSE support is indicated by a non-zero value
 	CBZ	R0, no_lse
 #endif
+#endif
+
+#ifdef GOOS_sylixos
+	MOVD	24(RSP), R0		// copy env
+	SUB	$16, RSP
+	MOVD	R0, 8(RSP) // env
+	MOVD	$0, 0(RSP) // dummy LR
+	BL	runtime·sylixosenvs(SB)
+	ADD	$16, RSP
 #endif
 
 	MOVW	8(RSP), R0	// copy argc
