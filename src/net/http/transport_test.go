@@ -5504,7 +5504,9 @@ timeoutLoop:
 					return false
 				}
 			}
-			res.Body.Close()
+			if err == nil {
+				res.Body.Close()
+			}
 			conns := idleConns()
 			if len(conns) != 1 {
 				if len(conns) == 0 {
